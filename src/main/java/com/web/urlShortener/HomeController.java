@@ -13,7 +13,7 @@ public class HomeController {
 	@GetMapping("/")
 	public String home(Model model) {
 		model.addAttribute("title", "URl -Shortner");
-		return "index";
+		return "home";
 	}
 	
 	@GetMapping("/about")
