@@ -2,7 +2,6 @@ package com.web.urlShortener.domain.models;
 
 public enum Role {
 	
-	ADMIN,
-	USER
+	ROLE_USER, ROLE_ADMIN
 
 }
