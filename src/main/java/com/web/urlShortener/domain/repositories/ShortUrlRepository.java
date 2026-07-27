@@ -11,7 +11,7 @@ import com.web.urlShortener.domain.entities.ShortUrl;
 @Repository
 public interface ShortUrlRepository extends JpaRepository<ShortUrl, Long> {
 	
-	@Query("select su from ShortUrl su where su.isPrivate = false order by su.createdAt desc")
+	@Query("select su from ShortUrl su left join fetch su.cratedBy where su.isPrivate = false order by su.createdAt desc")
 	List<ShortUrl> findPublicShortUrls();
 	
 }
