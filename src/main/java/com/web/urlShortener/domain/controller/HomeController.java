@@ -46,18 +46,25 @@ public class HomeController {
     		 model.addAttribute("shortUrls", shortUrls);
 		     model.addAttribute("baseUrl", "http://localhost:8080");     
 		     return "index";
+		     
+    	}
+    	
+    	try {
+    		shortUrlService.createShortUrl(form.getOriginalUrl());
+    		
+    		
+    		redirectAttributes.addFlashAttribute("successMessage", "Short URL created successfully!");
+    	    return "redirect:/";	
+    	}
+    	catch(Exception ex){
+    		  redirectAttributes.addFlashAttribute("errorMessage", "Short URL created failed!");
+    		  return "redirect:/";	
+    	}
     		 
-		   //Todo 
-		     
-		     redirectAttributes.addFlashAttribute("successMessage", "Short URL created successfully!");
-		     return "redirect:/";
-		     
+
+	     
 	}
     
-    
-	
-	
-	
-	
+   
 
 }

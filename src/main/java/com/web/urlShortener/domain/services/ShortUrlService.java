@@ -1,6 +1,8 @@
 package com.web.urlShortener.domain.services;
 
+import java.time.Instant;
 import java.util.List;
+import java.util.Random;
 
 import org.springframework.stereotype.Service;
 
@@ -18,6 +20,7 @@ public class ShortUrlService {
 	
 	private final ShortUrlRepository shortUrlRepository;
 	private final ShortUrlMapper shortUrlMapper;
+	private static final String CHARACTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
 
 	public ShortUrlService(ShortUrlRepository shortUrlRepository,ShortUrlMapper shortUrlMapper) {
 
@@ -25,10 +28,40 @@ public class ShortUrlService {
 		this.shortUrlMapper = shortUrlMapper;
 	}
 	
+	 public static String generateRandomString(int length) {
+	        Random random = new Random();
+	        StringBuilder sb = new StringBuilder(length);
+
+	        for (int i = 0; i < length; i++) {
+	            int randomIndex = random.nextInt(CHARACTERS.length());
+	            sb.append(CHARACTERS.charAt(randomIndex));
+	        }
+
+	        return sb.toString();
+	    }
+	
 	public List<ShortUrlDto> findAllPublicShortUrls(){
 		List<ShortUrl> urls =  shortUrlRepository.findPublicShortUrls();
 		return shortUrlMapper.toShortUrlDto(urls);
 			
+	}
+
+	public void createShortUrl(String originalUrl) {
+		
+		//TODO check url already exist
+		String shortKeyString =  generateRandomString(8);
+		ShortUrl shortUrl = new ShortUrl();
+		shortUrl.setOriginalUrl(originalUrl);
+		shortUrl.setShortKey(shortKeyString);
+		shortUrl.setCreatedBy(null);
+		shortUrl.setExpiresAt(Instant.MAX);
+		shortUrl.setCreatedAt(Instant.now());
+		shortUrl.setIsPrivate(false);
+		
+		shortUrlRepository.save(shortUrl);
+				
+		
+		
 	}
 	
 	
