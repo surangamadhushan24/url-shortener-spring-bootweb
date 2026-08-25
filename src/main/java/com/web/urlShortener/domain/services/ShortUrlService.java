@@ -11,6 +11,8 @@ import com.web.urlShortener.domain.dtos.ShortUrlDto;
 import com.web.urlShortener.domain.entities.ShortUrl;
 import com.web.urlShortener.domain.mappers.ShortUrlMapper;
 import com.web.urlShortener.domain.repositories.ShortUrlRepository;
+import com.web.urlShortener.util.UrlExistenceValidator;
+
 import static java.time.temporal.ChronoUnit.*;
 
 
@@ -52,8 +54,15 @@ public class ShortUrlService {
 
 	public ShortUrlDto createShortUrl(String originalUrl) {
 		
+		if(properties.validateOriginalUrl()) {
+			boolean isUrlExistance = UrlExistenceValidator.isUrlExists(originalUrl);
+			if(!isUrlExistance) {
+				throw new IllegalArgumentException("URL does not exist: " + originalUrl);
+			}
+		}
+		
 		//TODO check url already exist
-		//TODO check url is valid
+		
 		String shortKeyString =  generateRandomString(8);
 		ShortUrl shortUrl = new ShortUrl();
 		shortUrl.setOriginalUrl(originalUrl);
