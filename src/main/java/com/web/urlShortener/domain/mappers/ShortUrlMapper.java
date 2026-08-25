@@ -14,5 +14,6 @@ import com.web.urlShortener.domain.entities.ShortUrl;
 public interface ShortUrlMapper {
 	
 	List<ShortUrlDto>  toShortUrlDto(List<ShortUrl> url);
+	ShortUrlDto toShortUrlDto(ShortUrl url);
 	
 }
