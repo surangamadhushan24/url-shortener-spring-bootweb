@@ -1,4 +1,4 @@
-package com.web.urlShortener.domain.exceptions;
+package com.web.urlShortener.exceptions;
 
 
 

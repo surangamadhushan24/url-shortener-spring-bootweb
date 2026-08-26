@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Server Error</title>
+</head>
+
+<body>
+
+<div layout:fragment="content">
+
+    <div class="text-center">
+        <h1>500</h1>
+        <h2>Something Went Wrong</h2>
+        <p>Sorry, an unexpected error occurred on the server.</p>
+
+        <a href="/" class="btn btn-primary">Go Home</a>
+    </div>
+
+</div>
+
+</body>
+</html>

@@ -16,8 +16,8 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import com.web.urlShortener.ApplicationProperties;
 import com.web.urlShortener.domain.dtos.CreateShortUrlForm;
 import com.web.urlShortener.domain.dtos.ShortUrlDto;
-import com.web.urlShortener.domain.exceptions.ShortUrlNotFoundException;
 import com.web.urlShortener.domain.services.ShortUrlService;
+import com.web.urlShortener.exceptions.ShortUrlNotFoundException;
 
 import groovyjarjarantlr4.v4.parse.ANTLRParser.finallyClause_return;
 import groovyjarjarantlr4.v4.parse.ANTLRParser.throwsSpec_return;
