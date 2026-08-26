@@ -86,7 +86,8 @@ public class ShortUrlService {
 		
 		
 	}
-
+	
+	@Transactional
 	public Optional<ShortUrlDto> redirectToOriginalUrl(String shortKey) {
 		Optional<ShortUrl> shortUrlOptional = shortUrlRepository.findByShortKey(shortKey);
 		if(shortUrlOptional.isEmpty()) {
@@ -96,7 +97,8 @@ public class ShortUrlService {
 		if(shortUrl.getExpiresAt() != null && shortUrl.getExpiresAt().isBefore(Instant.now())) {
 			return Optional.empty();
 		}
-		
+		shortUrl.setClickCount(shortUrl.getClickCount() + 1);
+		shortUrlRepository.save(shortUrl);
 		return shortUrlOptional.map(shortUrlMapper::toShortUrlDto);
 	}
 	
