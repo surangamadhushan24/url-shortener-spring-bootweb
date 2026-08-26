@@ -1,12 +1,13 @@
 package com.web.urlShortener.domain.repositories;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
-import com.web.urlShortener.domain.dtos.ShortUrlDto;
+
 import com.web.urlShortener.domain.entities.ShortUrl;
 
 @Repository
@@ -14,5 +15,8 @@ public interface ShortUrlRepository extends JpaRepository<ShortUrl, Long> {
 	
 	@Query("select su from ShortUrl su left join fetch su.createdBy where su.isPrivate = false order by su.createdAt desc")
 	List<ShortUrl> findPublicShortUrls();
+
+	@Query("select su from ShortUrl su left join fetch su.createdBy where su.shortKey = :shortKey")
+	Optional<ShortUrl> findByShortKey(String shortKey);
 	
 }

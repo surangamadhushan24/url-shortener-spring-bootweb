@@ -2,9 +2,11 @@ package com.web.urlShortener.domain.services;
 
 import java.time.Instant;
 import java.util.List;
+import java.util.Optional;
 import java.util.Random;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.web.urlShortener.ApplicationProperties;
 import com.web.urlShortener.domain.dtos.ShortUrlDto;
@@ -13,6 +15,7 @@ import com.web.urlShortener.domain.mappers.ShortUrlMapper;
 import com.web.urlShortener.domain.repositories.ShortUrlRepository;
 import com.web.urlShortener.util.UrlExistenceValidator;
 
+
 import static java.time.temporal.ChronoUnit.*;
 
 
@@ -20,6 +23,7 @@ import static java.time.temporal.ChronoUnit.*;
 
 
 @Service
+@Transactional(readOnly = true)
 public class ShortUrlService {
 	
 	private final ShortUrlRepository shortUrlRepository;
@@ -51,7 +55,10 @@ public class ShortUrlService {
 		return shortUrlMapper.toShortUrlDto(urls);
 			
 	}
-
+	
+	
+	
+	@Transactional
 	public ShortUrlDto createShortUrl(String originalUrl) {
 		
 		if(properties.validateOriginalUrl()) {
@@ -78,6 +85,19 @@ public class ShortUrlService {
 				
 		
 		
+	}
+
+	public Optional<ShortUrlDto> redirectToOriginalUrl(String shortKey) {
+		Optional<ShortUrl> shortUrlOptional = shortUrlRepository.findByShortKey(shortKey);
+		if(shortUrlOptional.isEmpty()) {
+			return Optional.empty();
+		}
+		ShortUrl shortUrl = shortUrlOptional.get();
+		if(shortUrl.getExpiresAt() != null && shortUrl.getExpiresAt().isBefore(Instant.now())) {
+			return Optional.empty();
+		}
+		
+		return shortUrlOptional.map(shortUrlMapper::toShortUrlDto);
 	}
 	
 	
