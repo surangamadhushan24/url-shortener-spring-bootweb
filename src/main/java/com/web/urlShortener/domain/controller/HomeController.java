@@ -1,6 +1,6 @@
 package com.web.urlShortener.domain.controller;
 
-import java.time.Instant;
+
 import java.util.List;
 import java.util.Optional;
 
@@ -16,11 +16,10 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import com.web.urlShortener.ApplicationProperties;
 import com.web.urlShortener.domain.dtos.CreateShortUrlForm;
 import com.web.urlShortener.domain.dtos.ShortUrlDto;
+import com.web.urlShortener.domain.entities.User;
 import com.web.urlShortener.domain.services.ShortUrlService;
 import com.web.urlShortener.exceptions.ShortUrlNotFoundException;
-
-import groovyjarjarantlr4.v4.parse.ANTLRParser.finallyClause_return;
-import groovyjarjarantlr4.v4.parse.ANTLRParser.throwsSpec_return;
+import com.web.urlShortener.util.SecurityUtils;
 import jakarta.validation.Valid;
 
 @Controller
@@ -28,14 +27,19 @@ public class HomeController {
 
 	private final ShortUrlService shortUrlService;
 	private final ApplicationProperties property;
+	private final SecurityUtils securityUtils;
 
-	public HomeController(ShortUrlService shortUrlService,ApplicationProperties property ) {
+	public HomeController(ShortUrlService shortUrlService,ApplicationProperties property,SecurityUtils securityUtils) {
 		this.shortUrlService = shortUrlService;
 		this.property = property;
+		this.securityUtils =securityUtils ;
 	}
 
 	@GetMapping("/")
 	public String home(Model model) {
+		
+		User currentUser = securityUtils.getCurrentUser();
+		
 		List<ShortUrlDto> shortUrls = shortUrlService.findAllPublicShortUrls();
 		model.addAttribute("shortUrls", shortUrls);
 		model.addAttribute("baseUrl", "http://localhost:8080");
@@ -82,6 +86,11 @@ public class HomeController {
 		
 		
 	}
+	
+	 @GetMapping("/login")
+	    String loginForm() {
+	        return "login";
+	    }
     
    
 
