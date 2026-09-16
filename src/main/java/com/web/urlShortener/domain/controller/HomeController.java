@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.web.urlShortener.ApplicationProperties;
+import com.web.urlShortener.domain.dtos.CreateShortUrlCmd;
 import com.web.urlShortener.domain.dtos.CreateShortUrlForm;
 import com.web.urlShortener.domain.dtos.ShortUrlDto;
 import com.web.urlShortener.domain.entities.User;
@@ -43,7 +44,7 @@ public class HomeController {
 		List<ShortUrlDto> shortUrls = shortUrlService.findAllPublicShortUrls();
 		model.addAttribute("shortUrls", shortUrls);
 		model.addAttribute("baseUrl", "http://localhost:8080");
-		model.addAttribute("createShortUrlForm", new CreateShortUrlForm(""));
+		model.addAttribute("createShortUrlForm", new CreateShortUrlForm("",false,null));
 		return "index";
 	}
 
@@ -62,7 +63,14 @@ public class HomeController {
     	}
     	
     	try {
-    		var shortUrl = shortUrlService.createShortUrl(form.getOriginalUrl());
+    		Long userId = securityUtils.getCurrentUserId();
+    		CreateShortUrlCmd cmd = new CreateShortUrlCmd(
+    				form.getOriginalUrl(),
+					form.getIsPrivate(),
+					form.getExpirationInDays(),
+					userId
+			);
+    		var shortUrl = shortUrlService.createShortUrl(cmd);
     		redirectAttributes.addFlashAttribute("successMessage", "Short URL created successfully!"+ property.baseUrl() + "/s/" + shortUrl.shortKey());
     	    	
     	}
@@ -77,7 +85,8 @@ public class HomeController {
 	
 	@GetMapping("/s/{shortKey}")
 	public String redirectToOriginalUrl(@PathVariable String shortKey)  {
-		Optional<ShortUrlDto> shortUrlOptional= shortUrlService.redirectToOriginalUrl(shortKey);
+		Long userId = securityUtils.getCurrentUserId();
+		Optional<ShortUrlDto> shortUrlOptional= shortUrlService.redirectToOriginalUrl(shortKey,userId);
 		if(shortUrlOptional.isEmpty()) {
 			throw new ShortUrlNotFoundException("Short URL not found for key: " + shortKey);
 		}
