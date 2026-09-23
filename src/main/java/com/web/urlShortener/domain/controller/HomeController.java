@@ -1,6 +1,5 @@
 package com.web.urlShortener.domain.controller;
 
-
 import java.util.List;
 import java.util.Optional;
 
@@ -32,22 +31,24 @@ public class HomeController {
 	private final ApplicationProperties property;
 	private final SecurityUtils securityUtils;
 
-	public HomeController(ShortUrlService shortUrlService,ApplicationProperties property,SecurityUtils securityUtils) {
+	public HomeController(ShortUrlService shortUrlService, ApplicationProperties property,
+			SecurityUtils securityUtils) {
 		this.shortUrlService = shortUrlService;
 		this.property = property;
-		this.securityUtils =securityUtils ;
+		this.securityUtils = securityUtils;
 	}
 
 	@GetMapping("/")
-	public String home(@RequestParam(defaultValue = "1") Integer page,  Model model) {
-		
-		User currentUser = securityUtils.getCurrentUser();
-		
-		PagedResult<ShortUrlDto> shortUrls = shortUrlService.findAllPublicShortUrls(page,property.pageSize());
-		model.addAttribute("shortUrls", shortUrls);
-		model.addAttribute("baseUrl", "http://localhost:8080");
-		model.addAttribute("createShortUrlForm", new CreateShortUrlForm("",false,null));
+	public String home(@RequestParam(defaultValue = "1") Integer page, Model model) {
+		this.addShortUrlsDataToModel(model, page);
+		model.addAttribute("createShortUrlForm", new CreateShortUrlForm("", false, null));
 		return "index";
+	}
+
+	private void addShortUrlsDataToModel(Model model, int page) {
+		PagedResult<ShortUrlDto> shortUrls = shortUrlService.findAllPublicShortUrls(page, property.pageSize());
+		model.addAttribute("shortUrls", shortUrls);
+		model.addAttribute("baseUrl", property.baseUrl());
 	}
 
 	@PostMapping("/short-urls")
@@ -57,9 +58,7 @@ public class HomeController {
     		Model model) {
     	
     	if(bindingResult.hasErrors()) {
-    		 PagedResult<ShortUrlDto> shortUrls = shortUrlService.findAllPublicShortUrls(1,property.pageSize());
-    		 model.addAttribute("shortUrls", shortUrls);
-		     model.addAttribute("baseUrl", "http://localhost:8080");     
+    		 this.addShortUrlsDataToModel(model, 1);  
 		     return "index";
 		     
     	}
@@ -83,26 +82,22 @@ public class HomeController {
     	return "redirect:/";
     		    
 	}
-	
-	
+
 	@GetMapping("/s/{shortKey}")
-	public String redirectToOriginalUrl(@PathVariable String shortKey)  {
+	public String redirectToOriginalUrl(@PathVariable String shortKey) {
 		Long userId = securityUtils.getCurrentUserId();
-		Optional<ShortUrlDto> shortUrlOptional= shortUrlService.redirectToOriginalUrl(shortKey,userId);
-		if(shortUrlOptional.isEmpty()) {
+		Optional<ShortUrlDto> shortUrlOptional = shortUrlService.redirectToOriginalUrl(shortKey, userId);
+		if (shortUrlOptional.isEmpty()) {
 			throw new ShortUrlNotFoundException("Short URL not found for key: " + shortKey);
 		}
-		
+
 		return "redirect:" + shortUrlOptional.get().originalUrl();
-		
-		
+
 	}
-	
-	 @GetMapping("/login")
-	    String loginForm() {
-	        return "login";
-	    }
-    
-   
+
+	@GetMapping("/login")
+	String loginForm() {
+		return "login";
+	}
 
 }
