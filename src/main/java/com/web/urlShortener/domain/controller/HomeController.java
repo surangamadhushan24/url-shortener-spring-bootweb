@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.web.urlShortener.ApplicationProperties;
@@ -18,6 +19,7 @@ import com.web.urlShortener.domain.dtos.CreateShortUrlCmd;
 import com.web.urlShortener.domain.dtos.CreateShortUrlForm;
 import com.web.urlShortener.domain.dtos.ShortUrlDto;
 import com.web.urlShortener.domain.entities.User;
+import com.web.urlShortener.domain.models.PagedResult;
 import com.web.urlShortener.domain.services.ShortUrlService;
 import com.web.urlShortener.exceptions.ShortUrlNotFoundException;
 import com.web.urlShortener.util.SecurityUtils;
@@ -37,11 +39,11 @@ public class HomeController {
 	}
 
 	@GetMapping("/")
-	public String home(Model model) {
+	public String home(@RequestParam(defaultValue = "1") Integer page,  Model model) {
 		
 		User currentUser = securityUtils.getCurrentUser();
 		
-		List<ShortUrlDto> shortUrls = shortUrlService.findAllPublicShortUrls();
+		PagedResult<ShortUrlDto> shortUrls = shortUrlService.findAllPublicShortUrls(page,property.pageSize());
 		model.addAttribute("shortUrls", shortUrls);
 		model.addAttribute("baseUrl", "http://localhost:8080");
 		model.addAttribute("createShortUrlForm", new CreateShortUrlForm("",false,null));
@@ -55,7 +57,7 @@ public class HomeController {
     		Model model) {
     	
     	if(bindingResult.hasErrors()) {
-    		 List<ShortUrlDto> shortUrls = shortUrlService.findAllPublicShortUrls();
+    		 PagedResult<ShortUrlDto> shortUrls = shortUrlService.findAllPublicShortUrls(1,property.pageSize());
     		 model.addAttribute("shortUrls", shortUrls);
 		     model.addAttribute("baseUrl", "http://localhost:8080");     
 		     return "index";
