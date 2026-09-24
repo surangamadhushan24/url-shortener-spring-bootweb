@@ -1,6 +1,5 @@
 package com.web.urlShortener.domain.controller;
 
-import java.util.List;
 import java.util.Optional;
 
 import org.springframework.stereotype.Controller;
@@ -17,7 +16,6 @@ import com.web.urlShortener.ApplicationProperties;
 import com.web.urlShortener.domain.dtos.CreateShortUrlCmd;
 import com.web.urlShortener.domain.dtos.CreateShortUrlForm;
 import com.web.urlShortener.domain.dtos.ShortUrlDto;
-import com.web.urlShortener.domain.entities.User;
 import com.web.urlShortener.domain.models.PagedResult;
 import com.web.urlShortener.domain.services.ShortUrlService;
 import com.web.urlShortener.exceptions.ShortUrlNotFoundException;
