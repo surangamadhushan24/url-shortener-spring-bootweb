@@ -80,6 +80,15 @@ public class HomeController {
     	return "redirect:/";
     		    
 	}
+	
+	@GetMapping("/my-urls")
+	public String myUrls(@RequestParam(defaultValue = "1") Integer page, Model model) {
+		Long userId = securityUtils.getCurrentUserId();
+		PagedResult<ShortUrlDto> shortUrls = shortUrlService.findShortUrlsByUserId(userId, page, property.pageSize());
+		model.addAttribute("shortUrls", shortUrls);
+		model.addAttribute("baseUrl", property.baseUrl());
+		return "my-urls";
+	}
 
 	@GetMapping("/s/{shortKey}")
 	public String redirectToOriginalUrl(@PathVariable String shortKey) {

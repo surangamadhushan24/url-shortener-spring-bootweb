@@ -117,4 +117,13 @@ public class ShortUrlService {
 		return shortUrlOptional.map(shortUrlMapper::toShortUrlDto);
 	}
 
+	public PagedResult<ShortUrlDto> findShortUrlsByUserId(Long userId, Integer page, int pageSize) {
+		
+		page = page < 1 ? 0 : page - 1;
+		Pageable pageable = PageRequest.of(page, pageSize, Sort.by(Sort.Direction.DESC, "createdAt"));
+		Page<ShortUrlDto> shortUrlDtoPage = shortUrlRepository.findByCreatedById(userId, pageable)
+				.map(shortUrlMapper::toShortUrlDto);
+		return PagedResult.from(shortUrlDtoPage);
+	}
+
 }
