@@ -50,37 +50,31 @@ public class HomeController {
 	}
 
 	@PostMapping("/short-urls")
-    public String createShortUrl(@ModelAttribute("createShortUrlForm") @Valid CreateShortUrlForm form,
-    		BindingResult bindingResult,
-    		RedirectAttributes redirectAttributes,
-    		Model model) {
-    	
-    	if(bindingResult.hasErrors()) {
-    		 this.addShortUrlsDataToModel(model, 1);  
-		     return "index";
-		     
-    	}
-    	
-    	try {
-    		Long userId = securityUtils.getCurrentUserId();
-    		CreateShortUrlCmd cmd = new CreateShortUrlCmd(
-    				form.getOriginalUrl(),
-					form.getIsPrivate(),
-					form.getExpirationInDays(),
-					userId
-			);
-    		var shortUrl = shortUrlService.createShortUrl(cmd);
-    		redirectAttributes.addFlashAttribute("successMessage", "Short URL created successfully!"+ property.baseUrl() + "/s/" + shortUrl.shortKey());
-    	    	
-    	}
-    	catch(Exception ex){
-    		  redirectAttributes.addFlashAttribute("errorMessage", "Short URL created failed!");
-    		 
-    	}
-    	return "redirect:/";
-    		    
+	public String createShortUrl(@ModelAttribute("createShortUrlForm") @Valid CreateShortUrlForm form,
+			BindingResult bindingResult, RedirectAttributes redirectAttributes, Model model) {
+
+		if (bindingResult.hasErrors()) {
+			this.addShortUrlsDataToModel(model, 1);
+			return "index";
+
+		}
+
+		try {
+			Long userId = securityUtils.getCurrentUserId();
+			CreateShortUrlCmd cmd = new CreateShortUrlCmd(form.getOriginalUrl(), form.getIsPrivate(),
+					form.getExpirationInDays(), userId);
+			var shortUrl = shortUrlService.createShortUrl(cmd);
+			redirectAttributes.addFlashAttribute("successMessage",
+					"Short URL created successfully!" + property.baseUrl() + "/s/" + shortUrl.shortKey());
+
+		} catch (Exception ex) {
+			redirectAttributes.addFlashAttribute("errorMessage", "Short URL created failed!");
+
+		}
+		return "redirect:/";
+
 	}
-	
+
 	@GetMapping("/my-urls")
 	public String myUrls(@RequestParam(defaultValue = "1") Integer page, Model model) {
 		Long userId = securityUtils.getCurrentUserId();
@@ -105,6 +99,12 @@ public class HomeController {
 	@GetMapping("/login")
 	String loginForm() {
 		return "login";
+	}
+
+	@GetMapping("/register")
+	public String registerForm(Model model) {
+		model.addAttribute("user", new RegisterUserRequest("", "", ""));
+		return "register";
 	}
 
 }

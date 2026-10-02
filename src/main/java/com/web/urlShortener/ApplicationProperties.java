@@ -21,5 +21,6 @@ public record ApplicationProperties(
         boolean validateOriginalUrl,
         @DefaultValue("10")
         int pageSize
+        
 ) {
 }
