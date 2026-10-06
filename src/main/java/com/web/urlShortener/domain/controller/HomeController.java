@@ -1,5 +1,6 @@
 package com.web.urlShortener.domain.controller;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.stereotype.Controller;
@@ -101,11 +102,28 @@ public class HomeController {
 	String loginForm() {
 		return "login";
 	}
+	
+	 @PostMapping("/delete-urls")
+	    public String deleteUrls(
+	            @RequestParam(value = "ids", required = false) List<Long> ids,
+	            RedirectAttributes redirectAttributes) {
+	        if (ids == null || ids.isEmpty()) {
+	            redirectAttributes.addFlashAttribute(
+	                    "errorMessage", "No URLs selected for deletion");
+	            return "redirect:/my-urls";
+	        }
+	        try {
+	            var currentUserId = securityUtils.getCurrentUserId();
+	            shortUrlService.deleteUserShortUrls(ids, currentUserId);
+	            redirectAttributes.addFlashAttribute("successMessage",
+	                    "Selected URLs have been deleted successfully");
+	        } catch (Exception e) {
+	            redirectAttributes.addFlashAttribute("errorMessage",
+	                    "Error deleting URLs: " + e.getMessage());
+	        }
+	        return "redirect:/my-urls";
+	    }
 
-	@GetMapping("/register")
-	public String registerForm(Model model) {
-		model.addAttribute("user", new RegisterUserRequest("", "", ""));
-		return "register";
-	}
+
 
 }

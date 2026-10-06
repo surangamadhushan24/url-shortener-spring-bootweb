@@ -135,4 +135,11 @@ public class ShortUrlService {
 		
 	}
 
+	   @Transactional
+	    public void deleteUserShortUrls(List<Long> ids, Long userId) {
+	        if (ids != null && !ids.isEmpty() && userId != null) {
+	            shortUrlRepository.deleteByIdInAndCreatedById(ids, userId);
+	        }
+	    }
+
 }
